@@ -66,16 +66,16 @@ namespace Katja.Controllers
             //    .FirstOrDefault();
 
             //return Ok(students);
-            var studentForUpdate = _context.Students.FirstOrDefault(s => s.Name.Equals("Jurgen Emanuels"));
+            //var studentForUpdate = _context.Students.FirstOrDefault(s => s.Name.Equals("Jurgen Emanuels"));
 
-            var age = 37;
+            //var age = 37;
 
 
-            var rowsAffected = _context.Database.ExecuteSqlRaw(@"UPDATE Student SET Age = {0} WHERE Name = {1}", age, studentForUpdate.Name);
+            //var rowsAffected = _context.Database.ExecuteSqlRaw(@"UPDATE Student SET Age = {0} WHERE Name = {1}", age, studentForUpdate.Name);
 
-            _context.Entry(studentForUpdate).Reload();
+            //_context.Entry(studentForUpdate).Reload();
 
-            return Ok(new { rowsAffected = rowsAffected });
+            return Ok(students);
         }
     }
 }
