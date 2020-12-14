@@ -77,5 +77,24 @@ namespace Katja.Controllers
 
             return Ok(students);
         }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] Student student)
+        {
+            if (student == null)
+            {
+                return BadRequest();
+            }
+
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            _context.Add(student);
+            _context.SaveChanges();
+
+            return Created("URI of the created entity", student);
+        }
     }
 }
