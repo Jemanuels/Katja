@@ -30,16 +30,16 @@ namespace Katja.Controllers
             //    .ThenInclude(s => s.Subject)
             //    .FirstOrDefault();
 
-            //var students = _context.Students.FirstOrDefault();
+            var students = _context.Students.FirstOrDefault();
 
-            //_context.Entry(students).Collection(e => e.Evaluations).Load();
+            _context.Entry(students).Collection(e => e.Evaluations).Load();
 
-            //_context.Entry(students).Collection(ss => ss.StudentSubjects).Load();
+            _context.Entry(students).Collection(ss => ss.StudentSubjects).Load();
 
-            //foreach (var studentSubject in students.StudentSubjects)
-            //{
-            //    _context.Entry(studentSubject).Reference(s => s.Subject).Load();
-            //}
+            foreach (var studentSubject in students.StudentSubjects)
+            {
+                _context.Entry(studentSubject).Reference(s => s.Subject).Load();
+            }
 
             //var evaluationsCount = _context.Entry(students).Collection(e => e.Evaluations).Query().Count();
 
