@@ -30,16 +30,23 @@ namespace Katja.Controllers
             //    .ThenInclude(s => s.Subject)
             //    .FirstOrDefault();
 
-            var students = _context.Students.FirstOrDefault();
+            var students = _context.Students.ToList();
 
-            _context.Entry(students).Collection(e => e.Evaluations).Load();
-
-            _context.Entry(students).Collection(ss => ss.StudentSubjects).Load();
-
-            foreach (var studentSubject in students.StudentSubjects)
+            foreach( var student in students)
             {
-                _context.Entry(studentSubject).Reference(s => s.Subject).Load();
+                _context.Entry(student).Collection(e => e.Evaluations).Load();
+
+                _context.Entry(student).Collection(ss => ss.StudentSubjects).Load();
+
+                foreach (var studentSubject in student.StudentSubjects)
+                {
+                    _context.Entry(studentSubject).Reference(s => s.Subject).Load();
+                }
             }
+
+           
+
+            
 
             //var evaluationsCount = _context.Entry(students).Collection(e => e.Evaluations).Query().Count();
 
@@ -160,6 +167,21 @@ namespace Katja.Controllers
             _context.Students.Attach(student);
             _context.Entry(student).State = EntityState.Modified;
 
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(Guid id)
+        {
+            var student = _context.Students.FirstOrDefault(s => s.Id.Equals(id));
+            if(student == null)
+            {
+                return BadRequest();
+            }
+
+            student.Deleted = true;
             _context.SaveChanges();
 
             return NoContent();
