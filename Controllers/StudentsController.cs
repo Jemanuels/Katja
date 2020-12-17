@@ -86,15 +86,86 @@ namespace Katja.Controllers
                 return BadRequest();
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
+            student.StudentDetails = new StudentDetails
+            {
+                Address = "Added Address",
+                AdditionalInformation = "Additional Information added"
+            };
+
             _context.Add(student);
+
             _context.SaveChanges();
 
             return Created("URI of the created entity", student);
         }
+
+        [HttpPost("postrange")]
+        public IActionResult PostRange([FromBody] IEnumerable<Student> students)
+        {
+            // additional checks
+
+            _context.AddRange(students);
+            _context.SaveChanges();
+
+            return Created("URI is going here", students);
+        }[HttpPut("{id}")]
+        public IActionResult PUT(Guid id, [FromBody] Student student)
+        {
+            var dbStudent = _context.Students.FirstOrDefault(s => s.Id.Equals(id));
+
+            dbStudent.Age = student.Age;
+            dbStudent.Name = student.Name;
+            dbStudent.IsRegularStudent = student.IsRegularStudent;
+
+            var isAgeModified = _context.Entry(dbStudent).Property("Age").IsModified;
+            var isNameModified = _context.Entry(dbStudent).Property("Name").IsModified;
+            var isIsRegularStudentModified = _context.Entry(dbStudent).Property("IsRegularStudent").IsModified;
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/relationship")]
+        public IActionResult UpdateRelationship(Guid id, [FromBody] Student student)
+        {
+            var dbStudent = _context.Students.Include(s => s.StudentDetails).FirstOrDefault(s => s.Id.Equals(id));
+
+            //dbStudent.Age = student.Age;
+            //dbStudent.Name = student.Name;
+            //dbStudent.IsRegularStudent = student.IsRegularStudent;
+            //dbStudent.StudentDetails.Address = "Added Address";
+            //dbStudent.StudentDetails.AdditionalInformation = "Additional information updated";
+
+            dbStudent.StudentDetails = new StudentDetails
+            {
+                Id = new Guid(),
+                Address = "Added Address",
+                AdditionalInformation = "Additional information for " + student.Name
+            };
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+        [HttpPut("disconnected")]
+        public IActionResult UpdateDisconnected([FromBody] Student student)
+        {
+            _context.Students.Attach(student);
+            _context.Entry(student).State = EntityState.Modified;
+
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+
+
+
     }
 }
